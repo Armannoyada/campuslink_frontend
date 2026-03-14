@@ -117,9 +117,9 @@ export default function RolesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-100">Roles & Permissions</h1>
+        <h1 className="text-2xl font-bold text-foreground">Roles & Permissions</h1>
         {hasPermission('roles:create') && (
-          <Button onClick={() => setCreateOpen(true)} className="bg-[#1A73E8] hover:bg-[#1557b0]">
+          <Button onClick={() => setCreateOpen(true)}>
             <Plus size={18} className="mr-2" /> Create Role
           </Button>
         )}
@@ -134,24 +134,24 @@ export default function RolesPage() {
             rolesData?.map((role) => (
               <Card
                 key={role.id}
-                className={`cursor-pointer transition-colors border-slate-700 ${
-                  selectedRoleId === role.id ? 'bg-[#1A73E8]/10 border-[#1A73E8]/30' : 'bg-[#1E293B] hover:bg-slate-800'
+                className={`cursor-pointer transition-colors ${
+                  selectedRoleId === role.id ? 'bg-primary/5 border-primary/30' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => setSelectedRoleId(role.id)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Shield size={18} className={selectedRoleId === role.id ? 'text-[#1A73E8]' : 'text-slate-500'} />
+                      <Shield size={18} className={selectedRoleId === role.id ? 'text-primary' : 'text-muted-foreground'} />
                       <div>
-                        <p className="text-slate-200 font-medium">{role.displayName}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-foreground font-medium">{role.displayName}</p>
+                        <p className="text-xs text-muted-foreground">
                           {role.permissionCount} permissions • {role.userCount} users
                         </p>
                       </div>
                     </div>
                     {role.isSystem && (
-                      <Badge variant="outline" className="text-xs border-slate-600 text-slate-500">
+                      <Badge variant="outline" className="text-xs">
                         <Lock size={10} className="mr-1" /> System
                       </Badge>
                     )}
@@ -165,12 +165,12 @@ export default function RolesPage() {
         {/* Role Detail */}
         <div className="lg:col-span-2">
           {selectedRoleId && roleDetail ? (
-            <Card className="bg-[#1E293B] border-slate-700">
+            <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-slate-100">{roleDetail.displayName}</CardTitle>
-                    <p className="text-sm text-slate-400 mt-1">{roleDetail.description || 'No description'}</p>
+                    <CardTitle>{roleDetail.displayName}</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">{roleDetail.description || 'No description'}</p>
                   </div>
                   {!roleDetail.isSystem && hasPermission('roles:delete') && (
                     <Button variant="destructive" size="sm" onClick={() => deleteMutation.mutate(roleDetail.id)}>
@@ -179,25 +179,25 @@ export default function RolesPage() {
                   )}
                 </div>
                 {roleDetail.isSystem && (
-                  <div className="p-3 rounded-md bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm mt-2">
+                  <div className="p-3 rounded-md bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 text-yellow-700 dark:text-yellow-400 text-sm mt-2">
                     System Role — Cannot be deleted
                   </div>
                 )}
               </CardHeader>
               <CardContent>
-                <h3 className="text-slate-200 font-medium mb-4">Permission Matrix</h3>
+                <h3 className="text-foreground font-medium mb-4">Permission Matrix</h3>
                 {allPermissions && (
                   <div className="space-y-4">
                     {Object.entries(groupPermissions(allPermissions)).map(([resource, perms]) => (
                       <div key={resource}>
-                        <p className="text-sm font-medium text-slate-300 capitalize mb-2">{resource}</p>
+                        <p className="text-sm font-medium text-foreground capitalize mb-2">{resource}</p>
                         <div className="flex flex-wrap gap-3">
                           {perms.map((perm) => {
                             const isChecked = roleDetail.permissions?.some((p) => p.id === perm.id) || false;
                             return (
                               <label
                                 key={perm.id}
-                                className="flex items-center gap-2 text-sm text-slate-400"
+                                className="flex items-center gap-2 text-sm text-muted-foreground"
                               >
                                 <Checkbox
                                   checked={isChecked}
@@ -215,7 +215,7 @@ export default function RolesPage() {
                             );
                           })}
                         </div>
-                        <Separator className="bg-slate-700 mt-3" />
+                        <Separator className="mt-3" />
                       </div>
                     ))}
                   </div>
@@ -223,8 +223,8 @@ export default function RolesPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="bg-[#1E293B] border-slate-700">
-              <CardContent className="flex items-center justify-center h-64 text-slate-500">
+            <Card>
+              <CardContent className="flex items-center justify-center h-64 text-muted-foreground">
                 Select a role to view details
               </CardContent>
             </Card>
@@ -234,38 +234,36 @@ export default function RolesPage() {
 
       {/* Create Role Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="bg-[#1E293B] border-slate-700 max-w-lg">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-slate-100">Create Role</DialogTitle>
+            <DialogTitle>Create Role</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label className="text-slate-300">Display Name</Label>
+              <Label>Display Name</Label>
               <Input
                 value={newRole.displayName}
                 onChange={(e) => setNewRole({ ...newRole, displayName: e.target.value })}
                 placeholder="Content Moderator"
-                className="bg-[#0F172A] border-slate-600 text-slate-100"
               />
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Slug: {newRole.displayName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}
               </p>
             </div>
             <div>
-              <Label className="text-slate-300">Description</Label>
+              <Label>Description</Label>
               <Input
                 value={newRole.description}
                 onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
                 placeholder="Moderates content and reviews reports"
-                className="bg-[#0F172A] border-slate-600 text-slate-100"
               />
             </div>
             {allPermissions && (
               <div>
-                <Label className="text-slate-300 mb-2 block">Permissions</Label>
+                <Label className="mb-2 block">Permissions</Label>
                 <div className="max-h-48 overflow-y-auto space-y-2">
                   {allPermissions.map((perm) => (
-                    <label key={perm.id} className="flex items-center gap-2 text-sm text-slate-400">
+                    <label key={perm.id} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Checkbox
                         checked={selectedPermIds.includes(perm.id)}
                         onCheckedChange={(checked) => {
@@ -284,13 +282,12 @@ export default function RolesPage() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)} className="border-slate-600 text-slate-400">
+            <Button variant="outline" onClick={() => setCreateOpen(false)}>
               Cancel
             </Button>
             <Button
               onClick={handleCreateRole}
               disabled={!newRole.displayName || createMutation.isPending}
-              className="bg-[#1A73E8]"
             >
               Create
             </Button>

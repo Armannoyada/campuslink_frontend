@@ -35,11 +35,11 @@ const contentTypeIcons: Record<string, React.ReactNode> = {
 };
 
 const severityColors: Record<number, string> = {
-  1: 'bg-yellow-500/20 text-yellow-400',
-  2: 'bg-yellow-500/20 text-yellow-400',
-  3: 'bg-orange-500/20 text-orange-400',
-  4: 'bg-red-500/20 text-red-400',
-  5: 'bg-red-600/20 text-red-500',
+  1: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400',
+  2: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400',
+  3: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400',
+  4: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400',
+  5: 'bg-red-200 text-red-800 dark:bg-red-600/20 dark:text-red-500',
 };
 
 export default function ContentPage() {
@@ -84,7 +84,7 @@ export default function ContentPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-100">Content Moderation</h1>
+        <h1 className="text-2xl font-bold text-foreground">Content Moderation</h1>
         <div className="flex gap-2">
           {['pending', 'reviewed', 'dismissed'].map((status) => (
             <Button
@@ -92,7 +92,6 @@ export default function ContentPage() {
               variant={statusFilter === status ? 'default' : 'outline'}
               size="sm"
               onClick={() => { setStatusFilter(status); setSelectedId(null); }}
-              className={statusFilter === status ? 'bg-[#1A73E8]' : 'border-slate-700 text-slate-400'}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Button>
@@ -106,9 +105,9 @@ export default function ContentPage() {
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)
           ) : data?.items.length === 0 ? (
-            <Card className="bg-[#1E293B] border-slate-700">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-slate-500">
-                <CheckCircle size={48} className="text-green-500 mb-4" />
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                <CheckCircle size={48} className="text-green-500 dark:text-green-400 mb-4" />
                 <p className="text-lg font-medium">Queue Empty!</p>
                 <p className="text-sm">All reports have been reviewed.</p>
               </CardContent>
@@ -117,14 +116,14 @@ export default function ContentPage() {
             data?.items.map((report) => (
               <Card
                 key={report.id}
-                className={`cursor-pointer transition-colors border-slate-700 ${
-                  selectedId === report.id ? 'bg-[#1A73E8]/10 border-[#1A73E8]/30' : 'bg-[#1E293B] hover:bg-slate-800'
+                className={`cursor-pointer transition-colors ${
+                  selectedId === report.id ? 'bg-primary/5 border-primary/30' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => setSelectedId(report.id)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <span className="text-slate-500 mt-0.5">
+                    <span className="text-muted-foreground mt-0.5">
                       {contentTypeIcons[report.contentType] || <FileText size={16} />}
                     </span>
                     <div className="flex-1 min-w-0">
@@ -132,10 +131,10 @@ export default function ContentPage() {
                         <Badge className={`text-xs ${severityColors[report.severity] || severityColors[1]}`}>
                           Sev {report.severity}
                         </Badge>
-                        <span className="text-xs text-slate-500 capitalize">{report.contentType}</span>
+                        <span className="text-xs text-muted-foreground capitalize">{report.contentType}</span>
                       </div>
-                      <p className="text-sm text-slate-300 mt-1 capitalize">{report.reason}</p>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-sm text-foreground mt-1 capitalize">{report.reason}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
                         {new Date(report.createdAt).toLocaleString()}
                       </p>
                     </div>
@@ -149,10 +148,10 @@ export default function ContentPage() {
         {/* Review Panel */}
         <div className="lg:col-span-2">
           {selectedId && reportDetail ? (
-            <Card className="bg-[#1E293B] border-slate-700">
+            <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-slate-100">Review Report</CardTitle>
+                  <CardTitle>Review Report</CardTitle>
                   <Badge className={severityColors[reportDetail.severity] || severityColors[1]}>
                     Severity {reportDetail.severity}
                   </Badge>
@@ -161,41 +160,40 @@ export default function ContentPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-slate-500">Content Type</p>
-                    <p className="text-slate-200 capitalize">{reportDetail.contentType}</p>
+                    <p className="text-muted-foreground">Content Type</p>
+                    <p className="text-foreground capitalize">{reportDetail.contentType}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500">Reason</p>
-                    <p className="text-slate-200 capitalize">{reportDetail.reason}</p>
+                    <p className="text-muted-foreground">Reason</p>
+                    <p className="text-foreground capitalize">{reportDetail.reason}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500">Reporter</p>
-                    <p className="text-slate-200">{reportDetail.reporter?.username || reportDetail.reporterId}</p>
+                    <p className="text-muted-foreground">Reporter</p>
+                    <p className="text-foreground">{reportDetail.reporter?.username || reportDetail.reporterId}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500">Reported At</p>
-                    <p className="text-slate-200">{new Date(reportDetail.createdAt).toLocaleString()}</p>
+                    <p className="text-muted-foreground">Reported At</p>
+                    <p className="text-foreground">{new Date(reportDetail.createdAt).toLocaleString()}</p>
                   </div>
                 </div>
 
                 {reportDetail.description && (
                   <div>
-                    <p className="text-slate-500 text-sm">Description</p>
-                    <p className="text-slate-300 text-sm mt-1 p-3 bg-slate-800/50 rounded-md">
+                    <p className="text-muted-foreground text-sm">Description</p>
+                    <p className="text-foreground text-sm mt-1 p-3 bg-muted/50 rounded-md">
                       {reportDetail.description}
                     </p>
                   </div>
                 )}
 
-                <Separator className="bg-slate-700" />
+                <Separator />
 
                 <div>
-                  <p className="text-slate-300 text-sm mb-2">Action Note</p>
+                  <p className="text-foreground text-sm mb-2">Action Note</p>
                   <Input
                     placeholder="Add a note about your decision..."
                     value={actionNote}
                     onChange={(e) => setActionNote(e.target.value)}
-                    className="bg-[#0F172A] border-slate-600 text-slate-100"
                   />
                 </div>
 
@@ -205,27 +203,26 @@ export default function ContentPage() {
                     size="sm"
                     disabled={!actionNote || actionMutation.isPending}
                     onClick={() => actionMutation.mutate({ action: 'dismiss', note: actionNote })}
-                    className="border-slate-600 text-slate-400"
                   >
-                    <X size={14} className="mr-1" /> Dismiss <span className="ml-1 text-xs text-slate-600">(D)</span>
+                    <X size={14} className="mr-1" /> Dismiss
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={!actionNote || actionMutation.isPending}
                     onClick={() => actionMutation.mutate({ action: 'remove_content', note: actionNote })}
-                    className="border-orange-500/30 text-orange-400"
+                    className="border-orange-300 text-orange-600 dark:border-orange-500/30 dark:text-orange-400"
                   >
-                    <Trash2 size={14} className="mr-1" /> Remove <span className="ml-1 text-xs text-slate-600">(R)</span>
+                    <Trash2 size={14} className="mr-1" /> Remove
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={!actionNote || actionMutation.isPending}
                     onClick={() => actionMutation.mutate({ action: 'warn_user', note: actionNote })}
-                    className="border-yellow-500/30 text-yellow-400"
+                    className="border-yellow-300 text-yellow-600 dark:border-yellow-500/30 dark:text-yellow-400"
                   >
-                    <AlertCircle size={14} className="mr-1" /> Warn <span className="ml-1 text-xs text-slate-600">(W)</span>
+                    <AlertCircle size={14} className="mr-1" /> Warn
                   </Button>
                   <Button
                     variant="destructive"
@@ -233,14 +230,14 @@ export default function ContentPage() {
                     disabled={!actionNote || actionMutation.isPending}
                     onClick={() => actionMutation.mutate({ action: 'ban_user', note: actionNote })}
                   >
-                    <Ban size={14} className="mr-1" /> Ban <span className="ml-1 text-xs text-slate-600">(B)</span>
+                    <Ban size={14} className="mr-1" /> Ban
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ) : (
-            <Card className="bg-[#1E293B] border-slate-700">
-              <CardContent className="flex items-center justify-center h-64 text-slate-500">
+            <Card>
+              <CardContent className="flex items-center justify-center h-64 text-muted-foreground">
                 Select a report from the queue to review
               </CardContent>
             </Card>

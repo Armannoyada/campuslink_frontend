@@ -45,32 +45,34 @@ export default function DashboardPage() {
   });
 
   const kpiCards = [
-    { label: 'Total Users', value: stats?.totalUsers ?? 0, icon: Users, color: 'text-blue-400' },
-    { label: 'Active Today', value: stats?.activeToday ?? 0, icon: Activity, color: 'text-green-400' },
-    { label: 'New This Week', value: stats?.newThisWeek ?? 0, icon: TrendingUp, color: 'text-purple-400' },
-    { label: 'Reports Pending', value: stats?.pendingReports ?? 0, icon: AlertTriangle, color: 'text-orange-400' },
+    { label: 'Total Users', value: stats?.totalUsers ?? 0, icon: Users, bg: 'bg-blue-50 dark:bg-blue-950/40', color: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Active Today', value: stats?.activeToday ?? 0, icon: Activity, bg: 'bg-green-50 dark:bg-green-950/40', color: 'text-green-600 dark:text-green-400' },
+    { label: 'New This Week', value: stats?.newThisWeek ?? 0, icon: TrendingUp, bg: 'bg-purple-50 dark:bg-purple-950/40', color: 'text-purple-600 dark:text-purple-400' },
+    { label: 'Reports Pending', value: stats?.pendingReports ?? 0, icon: AlertTriangle, bg: 'bg-orange-50 dark:bg-orange-950/40', color: 'text-orange-600 dark:text-orange-400' },
   ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((card) => (
-          <Card key={card.label} className="bg-[#1E293B] border-slate-700">
+          <Card key={card.label}>
             <CardContent className="p-6">
               {statsLoading ? (
                 <Skeleton className="h-16 w-full" />
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-400">{card.label}</p>
-                    <p className="text-3xl font-bold text-slate-100 mt-1">
+                    <p className="text-sm text-muted-foreground">{card.label}</p>
+                    <p className="text-3xl font-bold text-foreground mt-1">
                       {formatNumber(card.value)}
                     </p>
                   </div>
-                  <card.icon className={`${card.color} opacity-60`} size={32} />
+                  <div className={`p-3 rounded-xl ${card.bg}`}>
+                    <card.icon className={card.color} size={24} />
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -81,9 +83,9 @@ export default function DashboardPage() {
       {/* Charts and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Card className="bg-[#1E293B] border-slate-700">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-slate-100">User Growth (30 Days)</CardTitle>
+              <CardTitle>User Growth (30 Days)</CardTitle>
             </CardHeader>
             <CardContent>
               {growthLoading ? (
@@ -96,9 +98,9 @@ export default function DashboardPage() {
         </div>
 
         <div>
-          <Card className="bg-[#1E293B] border-slate-700">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-slate-100">Recent Activity</CardTitle>
+              <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
             <CardContent>
               <ActivityFeed logs={activity || []} />
