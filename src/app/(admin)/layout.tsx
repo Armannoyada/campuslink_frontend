@@ -41,6 +41,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   const filteredNav = navItems.filter((item) => hasPermission(item.permission));
 
+  if (!isLoading && !user) {
+    router.push('/login');
+    return null;
+  }
+
   async function handleLogout() {
     try {
       await api.post('/auth/logout');
