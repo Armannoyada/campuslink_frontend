@@ -10,21 +10,17 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Shield, Plus, Users, Lock } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import api from '@/lib/api';
+import { Shield, Plus, Lock } from 'lucide-react';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { adminApi } from '@/lib/admin-api';
 import type { Role, Permission } from '@/types';
 import { toast } from 'sonner';
 
 export default function RolesPage() {
-  const { hasPermission } = useAuth();
+  const { hasPermission } = useAdminAuth();
   const queryClient = useQueryClient();
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -32,36 +28,36 @@ export default function RolesPage() {
   const [selectedPermIds, setSelectedPermIds] = useState<string[]>([]);
 
   const { data: rolesData, isLoading: rolesLoading } = useQuery({
-    queryKey: ['roles'],
+    queryKey: ['admin-roles'],
     queryFn: async () => {
-      const res = await api.get('/roles');
+      const res = await adminApi.get('/roles');
       return res.data.data as (Role & { permissionCount: number; userCount: number })[];
     },
   });
 
   const { data: roleDetail } = useQuery({
-    queryKey: ['role', selectedRoleId],
+    queryKey: ['admin-role', selectedRoleId],
     queryFn: async () => {
-      const res = await api.get(`/roles/${selectedRoleId}`);
+      const res = await adminApi.get(`/roles/${selectedRoleId}`);
       return res.data.data as Role & { permissions: Permission[] };
     },
     enabled: !!selectedRoleId,
   });
 
   const { data: allPermissions } = useQuery({
-    queryKey: ['permissions'],
+    queryKey: ['admin-permissions'],
     queryFn: async () => {
-      const res = await api.get('/roles/permissions');
+      const res = await adminApi.get('/roles/permissions');
       return res.data.data as Permission[];
     },
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: { name: string; displayName: string; description: string; permissionIds: string[] }) => {
-      await api.post('/roles', data);
+      await adminApi.post('/roles', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-roles'] });
       setCreateOpen(false);
       setNewRole({ displayName: '', description: '' });
       setSelectedPermIds([]);
@@ -72,11 +68,11 @@ export default function RolesPage() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, permissionIds }: { id: string; permissionIds: string[] }) => {
-      await api.patch(`/roles/${id}`, { permissionIds });
+      await adminApi.patch(`/roles/${id}`, { permissionIds });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
-      queryClient.invalidateQueries({ queryKey: ['role', selectedRoleId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-roles'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-role', selectedRoleId] });
       toast.success('Role updated');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -84,17 +80,16 @@ export default function RolesPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/roles/${id}`);
+      await adminApi.delete(`/roles/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-roles'] });
       setSelectedRoleId(null);
       toast.success('Role deleted');
     },
     onError: (err: Error) => toast.error(err.message),
   });
 
-  // Group permissions by resource
   function groupPermissions(perms: Permission[]) {
     const groups: Record<string, Permission[]> = {};
     for (const perm of perms) {
@@ -126,7 +121,6 @@ export default function RolesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Roles List */}
         <div className="space-y-2">
           {rolesLoading ? (
             Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)
@@ -162,7 +156,6 @@ export default function RolesPage() {
           )}
         </div>
 
-        {/* Role Detail */}
         <div className="lg:col-span-2">
           {selectedRoleId && roleDetail ? (
             <Card>
@@ -232,7 +225,6 @@ export default function RolesPage() {
         </div>
       </div>
 
-      {/* Create Role Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>

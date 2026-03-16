@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CampusLink Admin",
-  description: "CampusLink Admin Panel",
+  title: "CampusLink",
+  description: "CampusLink - Connect with your campus",
 };
 
 export default function RootLayout({

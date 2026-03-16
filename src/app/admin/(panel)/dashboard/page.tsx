@@ -3,8 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, Activity, FileText, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
-import api from '@/lib/api';
+import { Users, Activity, TrendingUp, AlertTriangle } from 'lucide-react';
+import { adminApi } from '@/lib/admin-api';
 import type { PlatformStats, UserGrowthItem, AuditLog } from '@/types';
 import { UserGrowthChart } from '@/components/admin/UserGrowthChart';
 import { ActivityFeed } from '@/components/admin/ActivityFeed';
@@ -18,27 +18,27 @@ function formatNumber(n: number): string {
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['platform-stats'],
+    queryKey: ['admin-platform-stats'],
     queryFn: async () => {
-      const res = await api.get('/admin/analytics/stats');
+      const res = await adminApi.get('/admin/analytics/stats');
       return res.data.data as PlatformStats;
     },
     refetchInterval: 60000,
   });
 
   const { data: growth, isLoading: growthLoading } = useQuery({
-    queryKey: ['user-growth', 30],
+    queryKey: ['admin-user-growth', 30],
     queryFn: async () => {
-      const res = await api.get('/admin/analytics/user-growth?days=30');
+      const res = await adminApi.get('/admin/analytics/user-growth?days=30');
       return res.data.data as UserGrowthItem[];
     },
     refetchInterval: 60000,
   });
 
   const { data: activity } = useQuery({
-    queryKey: ['recent-activity'],
+    queryKey: ['admin-recent-activity'],
     queryFn: async () => {
-      const res = await api.get('/admin/analytics/activity?limit=20');
+      const res = await adminApi.get('/admin/analytics/activity?limit=20');
       return res.data.data as AuditLog[];
     },
     refetchInterval: 30000,
@@ -55,7 +55,6 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((card) => (
           <Card key={card.label}>
@@ -80,7 +79,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Charts and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <Card>
