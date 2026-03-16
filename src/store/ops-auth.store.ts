@@ -1,10 +1,9 @@
 import { create } from 'zustand';
 
-export interface UserData {
+export interface OpsUserData {
   id: string;
   email: string;
   username: string;
-  phone?: string;
   isVerified: boolean;
   isActive: boolean;
   lastLoginAt?: string;
@@ -13,23 +12,23 @@ export interface UserData {
   permissions: string[];
 }
 
-interface AuthState {
-  user: UserData | null;
+interface OpsAuthState {
+  user: OpsUserData | null;
   accessToken: string | null;
   refreshToken: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   hasFetched: boolean;
-  setUser: (user: UserData | null) => void;
+  setUser: (user: OpsUserData | null) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setAccessToken: (accessToken: string) => void;
-  clearUser: () => void;
+  clearAuth: () => void;
   setLoading: (loading: boolean) => void;
   setHasFetched: () => void;
   resetAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useOpsAuthStore = create<OpsAuthState>((set) => ({
   user: null,
   accessToken: null,
   refreshToken: null,
@@ -42,7 +41,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken, refreshToken }),
   setAccessToken: (accessToken) =>
     set({ accessToken }),
-  clearUser: () =>
+  clearAuth: () =>
     set({ user: null, isAuthenticated: false, isLoading: false, accessToken: null, refreshToken: null }),
   setLoading: (isLoading) => set({ isLoading }),
   setHasFetched: () => set({ hasFetched: true }),

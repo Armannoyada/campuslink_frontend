@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { useAuthStore } from '@/store/auth.store';
+import { useUserAuthStore } from '@/store/user-auth.store';
 
-const api = axios.create({
+export const userApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1',
   withCredentials: true,
   headers: {
@@ -10,16 +10,14 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: attach Bearer token if available in store
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken;
+userApi.interceptors.request.use((config) => {
+  const token = useUserAuthStore.getState().accessToken;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Response interceptor: handle 401 refresh flow
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value: unknown) => void;
@@ -28,16 +26,13 @@ let failedQueue: Array<{
 
 function processQueue(error: unknown) {
   failedQueue.forEach((promise) => {
-    if (error) {
-      promise.reject(error);
-    } else {
-      promise.resolve(undefined);
-    }
+    if (error) promise.reject(error);
+    else promise.resolve(undefined);
   });
   failedQueue = [];
 }
 
-api.interceptors.response.use(
+userApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -46,25 +41,25 @@ api.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => api(originalRequest));
+        }).then(() => userApi(originalRequest));
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        const { refreshToken } = useAuthStore.getState();
-        const res = await api.post('/auth/refresh', refreshToken ? { refreshToken } : {});
+        const { refreshToken } = useUserAuthStore.getState();
+        const res = await userApi.post('/auth/user/refresh', refreshToken ? { refreshToken } : {});
         const newAccessToken = res.data?.data?.accessToken;
         const newRefreshToken = res.data?.data?.refreshToken;
         if (newAccessToken) {
-          useAuthStore.getState().setTokens(newAccessToken, newRefreshToken ?? refreshToken ?? '');
+          useUserAuthStore.getState().setTokens(newAccessToken, newRefreshToken ?? refreshToken ?? '');
         }
         processQueue(null);
-        return api(originalRequest);
+        return userApi(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        // Redirect to login
+        useUserAuthStore.getState().clearAuth();
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }
@@ -74,12 +69,8 @@ api.interceptors.response.use(
       }
     }
 
-    // Extract error message
     const message =
       error.response?.data?.error || error.response?.data?.message || error.message || 'Something went wrong';
-
     return Promise.reject(new Error(message));
   }
 );
-
-export default api;

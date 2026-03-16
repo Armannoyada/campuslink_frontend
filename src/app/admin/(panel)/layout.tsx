@@ -10,6 +10,7 @@ import {
   Shield,
   FileWarning,
   BarChart3,
+  Building2,
   LogOut,
   ChevronLeft,
   Menu,
@@ -20,34 +21,40 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useAuth } from '@/hooks/useAuth';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Skeleton } from '@/components/ui/skeleton';
-import api from '@/lib/api';
+import { adminApi } from '@/lib/admin-api';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, permission: 'analytics:read' },
-  { href: '/users', label: 'Users', icon: Users, permission: 'users:read' },
-  { href: '/roles', label: 'Roles', icon: Shield, permission: 'roles:read' },
-  { href: '/content', label: 'Content', icon: FileWarning, permission: 'content:review' },
-  { href: '/analytics', label: 'Analytics', icon: BarChart3, permission: 'analytics:read' },
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, permission: 'analytics:read' },
+  { href: '/admin/users', label: 'Users', icon: Users, permission: 'users:read' },
+  { href: '/admin/roles', label: 'Roles', icon: Shield, permission: 'roles:read' },
+  { href: '/admin/content', label: 'Content', icon: FileWarning, permission: 'content:review' },
+  { href: '/admin/analytics', label: 'Analytics', icon: BarChart3, permission: 'analytics:read' },
+  { href: '/admin/colleges', label: 'Colleges', icon: Building2, permission: 'users:read' },
 ];
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminPanelLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading, hasPermission } = useAuth();
+  const { user, isLoading, hasPermission } = useAdminAuth();
   const { theme, setTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
 
   const filteredNav = navItems.filter((item) => hasPermission(item.permission));
 
+  if (!isLoading && !user) {
+    router.push('/admin/login');
+    return null;
+  }
+
   async function handleLogout() {
     try {
-      await api.post('/auth/logout');
+      await adminApi.post('/auth/admin/logout');
     } catch {
       // Ignore
     }
-    router.push('/login');
+    router.push('/admin/login');
   }
 
   if (isLoading) {
@@ -112,7 +119,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <Separator />
 
         <div className="p-4 space-y-3">
-          {/* Theme toggle */}
           <Button
             variant="ghost"
             size="sm"

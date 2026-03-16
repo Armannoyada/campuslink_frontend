@@ -5,13 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Users,
-  Activity,
-  TrendingUp,
-  Calendar,
-} from 'lucide-react';
-import api from '@/lib/api';
+import { Users, Activity, TrendingUp, Calendar } from 'lucide-react';
+import { adminApi } from '@/lib/admin-api';
 import type { PlatformStats, UserGrowthItem, RetentionSnapshot } from '@/types';
 import { UserGrowthChart } from '@/components/admin/UserGrowthChart';
 
@@ -29,25 +24,25 @@ export default function AnalyticsPage() {
   const [period, setPeriod] = useState(30);
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['analytics', 'stats'],
+    queryKey: ['admin-analytics-stats'],
     queryFn: async () => {
-      const res = await api.get('/admin/analytics/stats');
+      const res = await adminApi.get('/admin/analytics/stats');
       return res.data.data as PlatformStats;
     },
   });
 
   const { data: growth, isLoading: growthLoading } = useQuery({
-    queryKey: ['analytics', 'growth', period],
+    queryKey: ['admin-analytics-growth', period],
     queryFn: async () => {
-      const res = await api.get(`/admin/analytics/user-growth?days=${period}`);
+      const res = await adminApi.get(`/admin/analytics/user-growth?days=${period}`);
       return res.data.data as UserGrowthItem[];
     },
   });
 
   const { data: retention, isLoading: retentionLoading } = useQuery({
-    queryKey: ['analytics', 'retention'],
+    queryKey: ['admin-analytics-retention'],
     queryFn: async () => {
-      const res = await api.get('/admin/analytics/retention');
+      const res = await adminApi.get('/admin/analytics/retention');
       return res.data.data as RetentionSnapshot;
     },
   });
@@ -56,7 +51,6 @@ export default function AnalyticsPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsLoading ? (
           Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 w-full" />)
@@ -73,7 +67,6 @@ export default function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
@@ -85,7 +78,6 @@ export default function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
@@ -97,7 +89,6 @@ export default function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
@@ -113,7 +104,6 @@ export default function AnalyticsPage() {
         ) : null}
       </div>
 
-      {/* User Growth Chart */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -143,7 +133,6 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
 
-      {/* Retention Snapshot */}
       <Card>
         <CardHeader>
           <CardTitle>Retention Snapshot</CardTitle>

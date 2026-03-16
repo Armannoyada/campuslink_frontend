@@ -9,19 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import {
-  AlertTriangle,
-  X,
-  Trash2,
-  AlertCircle,
-  Ban,
-  CheckCircle,
-  FileText,
-  Image,
-  Video,
-  MessageSquare,
-  User,
+  X, Trash2, AlertCircle, Ban, CheckCircle,
+  FileText, Video, MessageSquare, User, Image,
 } from 'lucide-react';
-import api from '@/lib/api';
+import { opsApi } from '@/lib/ops-api';
 import type { ContentReport } from '@/types';
 import { toast } from 'sonner';
 
@@ -42,24 +33,24 @@ const severityColors: Record<number, string> = {
   5: 'bg-red-200 text-red-800 dark:bg-red-600/20 dark:text-red-500',
 };
 
-export default function ContentPage() {
+export default function ContentQueuePage() {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [actionNote, setActionNote] = useState('');
   const [statusFilter, setStatusFilter] = useState('pending');
 
   const { data, isLoading } = useQuery({
-    queryKey: ['reports', statusFilter],
+    queryKey: ['ops-reports', statusFilter],
     queryFn: async () => {
-      const res = await api.get(`/admin/reports?status=${statusFilter}`);
+      const res = await opsApi.get(`/admin/reports?status=${statusFilter}`);
       return res.data.data as { items: ContentReport[]; hasMore: boolean };
     },
   });
 
   const { data: reportDetail } = useQuery({
-    queryKey: ['report', selectedId],
+    queryKey: ['ops-report', selectedId],
     queryFn: async () => {
-      const res = await api.get(`/admin/reports/${selectedId}`);
+      const res = await opsApi.get(`/admin/reports/${selectedId}`);
       return res.data.data as ContentReport;
     },
     enabled: !!selectedId,
@@ -67,12 +58,11 @@ export default function ContentPage() {
 
   const actionMutation = useMutation({
     mutationFn: async ({ action, note }: { action: string; note: string }) => {
-      await api.post(`/admin/reports/${selectedId}/action`, { action, note });
+      await opsApi.post(`/admin/reports/${selectedId}/action`, { action, note });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['ops-reports'] });
       setActionNote('');
-      // Auto-advance to next in queue
       const currentIndex = data?.items.findIndex((r) => r.id === selectedId) ?? -1;
       const next = data?.items[currentIndex + 1];
       setSelectedId(next?.id || null);
@@ -84,7 +74,7 @@ export default function ContentPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Content Moderation</h1>
+        <h1 className="text-2xl font-bold text-foreground">Content Queue</h1>
         <div className="flex gap-2">
           {['pending', 'reviewed', 'dismissed'].map((status) => (
             <Button
@@ -92,6 +82,7 @@ export default function ContentPage() {
               variant={statusFilter === status ? 'default' : 'outline'}
               size="sm"
               onClick={() => { setStatusFilter(status); setSelectedId(null); }}
+              className={statusFilter === status ? 'bg-teal-600 hover:bg-teal-700' : ''}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Button>
@@ -100,7 +91,6 @@ export default function ContentPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Queue List */}
         <div className="space-y-2 max-h-[70vh] overflow-y-auto">
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)
@@ -117,7 +107,7 @@ export default function ContentPage() {
               <Card
                 key={report.id}
                 className={`cursor-pointer transition-colors ${
-                  selectedId === report.id ? 'bg-primary/5 border-primary/30' : 'hover:bg-muted/50'
+                  selectedId === report.id ? 'bg-teal-50 dark:bg-teal-950/20 border-teal-300 dark:border-teal-700' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => setSelectedId(report.id)}
               >
@@ -145,7 +135,6 @@ export default function ContentPage() {
           )}
         </div>
 
-        {/* Review Panel */}
         <div className="lg:col-span-2">
           {selectedId && reportDetail ? (
             <Card>

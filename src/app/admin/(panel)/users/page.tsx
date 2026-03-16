@@ -3,41 +3,28 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MoreHorizontal, Search, Ban, Trash2, UserCheck } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useRouter } from 'next/navigation';
-import api from '@/lib/api';
+import { adminApi } from '@/lib/admin-api';
 import type { User, PaginatedResponse } from '@/types';
 import { toast } from 'sonner';
 
 export default function UsersPage() {
-  const { hasPermission } = useAuth();
+  const { hasPermission } = useAdminAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
@@ -52,7 +39,6 @@ export default function UsersPage() {
   });
   const [confirmText, setConfirmText] = useState('');
 
-  // Debounced search
   const handleSearch = (value: string) => {
     setSearch(value);
     const timeout = setTimeout(() => setDebouncedSearch(value), 300);
@@ -60,23 +46,23 @@ export default function UsersPage() {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['users', debouncedSearch, statusFilter],
+    queryKey: ['admin-users', debouncedSearch, statusFilter],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (debouncedSearch) params.set('search', debouncedSearch);
       if (statusFilter === 'active') params.set('isActive', 'true');
       if (statusFilter === 'banned') params.set('isActive', 'false');
-      const res = await api.get(`/admin/users?${params}`);
+      const res = await adminApi.get(`/admin/users?${params}`);
       return res.data.data as PaginatedResponse<User>;
     },
   });
 
   const banMutation = useMutation({
     mutationFn: async ({ userId, reason }: { userId: string; reason: string }) => {
-      await api.post(`/admin/users/${userId}/ban`, { reason });
+      await adminApi.post(`/admin/users/${userId}/ban`, { reason });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       setBanDialog({ open: false, userId: '', username: '' });
       setBanReason('');
       toast.success('User banned successfully');
@@ -86,10 +72,10 @@ export default function UsersPage() {
 
   const unbanMutation = useMutation({
     mutationFn: async (userId: string) => {
-      await api.post(`/admin/users/${userId}/unban`);
+      await adminApi.post(`/admin/users/${userId}/unban`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User unbanned');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -97,10 +83,10 @@ export default function UsersPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
-      await api.delete(`/admin/users/${userId}`);
+      await adminApi.delete(`/admin/users/${userId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       setDeleteDialog({ open: false, userId: '', username: '' });
       setConfirmText('');
       toast.success('User deleted');
@@ -120,7 +106,6 @@ export default function UsersPage() {
         <h1 className="text-2xl font-bold text-foreground">Users</h1>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
@@ -145,7 +130,6 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
@@ -181,7 +165,7 @@ export default function UsersPage() {
                 <TableRow
                   key={user.id}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/users/${user.id}`)}
+                  onClick={() => router.push(`/admin/users/${user.id}`)}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">

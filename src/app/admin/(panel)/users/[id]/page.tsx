@@ -9,11 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Monitor, Trash2, Shield } from 'lucide-react';
+import { ArrowLeft, Monitor, Shield } from 'lucide-react';
 import Link from 'next/link';
-import api from '@/lib/api';
-import { useAuth } from '@/hooks/useAuth';
+import { adminApi } from '@/lib/admin-api';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { toast } from 'sonner';
 import type { Session, AuditLog, Role } from '@/types';
 
@@ -33,39 +32,39 @@ interface UserDetail {
 
 export default function UserDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { hasPermission } = useAuth();
+  const { hasPermission } = useAdminAuth();
   const queryClient = useQueryClient();
 
   const { data: user, isLoading } = useQuery({
-    queryKey: ['user', id],
+    queryKey: ['admin-user', id],
     queryFn: async () => {
-      const res = await api.get(`/admin/users/${id}`);
+      const res = await adminApi.get(`/admin/users/${id}`);
       return res.data.data as UserDetail;
     },
   });
 
   const { data: sessions } = useQuery({
-    queryKey: ['user-sessions', id],
+    queryKey: ['admin-user-sessions', id],
     queryFn: async () => {
-      const res = await api.get(`/admin/users/${id}/sessions`);
+      const res = await adminApi.get(`/admin/users/${id}/sessions`);
       return res.data.data as Session[];
     },
   });
 
   const { data: auditLogs } = useQuery({
-    queryKey: ['user-audit', id],
+    queryKey: ['admin-user-audit', id],
     queryFn: async () => {
-      const res = await api.get(`/admin/users/${id}/audit-log`);
+      const res = await adminApi.get(`/admin/users/${id}/audit-log`);
       return res.data.data as AuditLog[];
     },
   });
 
   const revokeSessionsMutation = useMutation({
     mutationFn: async () => {
-      await api.delete(`/admin/users/${id}/sessions`);
+      await adminApi.delete(`/admin/users/${id}/sessions`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-sessions', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-user-sessions', id] });
       toast.success('All sessions revoked');
     },
   });
@@ -86,7 +85,7 @@ export default function UserDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/users">
+        <Link href="/admin/users">
           <Button variant="ghost" size="sm">
             <ArrowLeft size={18} className="mr-1" /> Back
           </Button>
@@ -95,7 +94,6 @@ export default function UserDetailPage() {
         {!user.isActive && <Badge variant="destructive">Banned</Badge>}
       </div>
 
-      {/* Profile Card */}
       <Card>
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
@@ -126,7 +124,6 @@ export default function UserDetailPage() {
         </CardContent>
       </Card>
 
-      {/* Tabs */}
       <Tabs defaultValue="sessions">
         <TabsList>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
