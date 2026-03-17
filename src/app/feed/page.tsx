@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   GraduationCap,
   Home,
@@ -56,28 +57,29 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0E0E11] transition-colors duration-300">
       {/* Top navigation */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b shadow-sm">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0A051A]/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-linear-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
               <GraduationCap className="text-white" size={18} />
             </div>
-            <span className="text-lg font-bold text-foreground hidden sm:block">CampusLink</span>
+            <span className="text-lg font-bold text-slate-900 dark:text-white hidden sm:block">CampusLink</span>
           </div>
 
           <div className="flex-1 max-w-md mx-4 hidden md:block">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-indigo-500 transition-colors" size={16} />
               <Input
                 placeholder="Search posts, people, topics..."
-                className="pl-9 h-9 bg-gray-100 dark:bg-gray-800 border-0"
+                className="pl-9 h-[42px] bg-slate-100 dark:bg-white/5 border border-transparent dark:border-white/10 text-[15px] text-slate-900 dark:text-white placeholder:text-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 rounded-xl"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-1">
+            <ThemeToggle />
             <Button variant="ghost" size="icon" className="rounded-full">
               <Bell size={20} />
             </Button>
@@ -107,12 +109,12 @@ export default function FeedPage() {
                   <div className="h-16 w-16 rounded-full bg-linear-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">
                     {user?.displayName?.[0] || user?.username?.[0] || '?'}
                   </div>
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-semibold text-slate-900 dark:text-white text-lg">
                     {user?.displayName || user?.username || 'Student'}
                   </h3>
-                  <p className="text-sm text-muted-foreground">@{user?.username}</p>
+                  <p className="text-[14px] text-slate-500">@{user?.username}</p>
                   {user?.collegeName && (
-                    <p className="text-xs text-muted-foreground mt-1">{user.collegeName}</p>
+                    <p className="text-[13px] font-medium text-indigo-600 dark:text-indigo-400 mt-1">{user.collegeName}</p>
                   )}
                 </div>
                 <div className="mt-4 space-y-1">
@@ -135,12 +137,12 @@ export default function FeedPage() {
                   </div>
                   <Input
                     placeholder="What's on your mind?"
-                    className="bg-gray-100 dark:bg-gray-800 border-0 rounded-full cursor-pointer"
+                    className="h-[46px] bg-slate-100 dark:bg-white/5 border border-transparent dark:border-white/10 text-[15px] text-slate-900 dark:text-white placeholder:text-slate-500 rounded-full cursor-pointer hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
                     readOnly
                   />
                   <Button
                     size="icon"
-                    className="rounded-full bg-linear-to-r from-violet-600 to-indigo-600 shrink-0"
+                    className="w-[46px] h-[46px] rounded-full bg-linear-to-r from-violet-600 to-indigo-600 shadow-md shadow-indigo-500/20 shrink-0"
                   >
                     <PlusCircle size={18} />
                   </Button>
@@ -149,29 +151,29 @@ export default function FeedPage() {
             </Card>
 
             {/* Welcome card */}
-            <Card className="border-violet-200 dark:border-violet-800 bg-linear-to-r from-violet-50 to-indigo-50 dark:from-violet-950/30 dark:to-indigo-950/30">
+            <Card className="border border-indigo-500/20 dark:border-indigo-500/20 bg-linear-to-r from-indigo-50/50 to-violet-50/50 dark:from-indigo-500/10 dark:to-violet-500/10 shadow-none">
               <CardContent className="p-6 text-center">
                 <div className="text-4xl mb-3">🎉</div>
-                <h3 className="text-lg font-bold text-foreground mb-1">
+                <h3 className="text-[18px] font-bold text-slate-900 dark:text-white mb-2">
                   Welcome to CampusLink{user?.displayName ? `, ${user.displayName}` : ''}!
                 </h3>
-                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                <p className="text-[14px] text-slate-600 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
                   Your campus feed is ready. Connect with classmates, join communities, share your thoughts, and discover what&apos;s happening around campus.
                 </p>
               </CardContent>
             </Card>
 
             {/* Empty state */}
-            <Card>
-              <CardContent className="p-8 text-center">
-                <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
-                  <GraduationCap className="text-muted-foreground" size={28} />
+            <Card className="border-dashed border-2 bg-transparent shadow-none dark:border-white/10 dark:bg-transparent">
+              <CardContent className="p-10 text-center">
+                <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-5 rotate-3 transition-transform hover:rotate-6">
+                  <GraduationCap className="text-indigo-500" size={32} />
                 </div>
-                <h4 className="font-semibold text-foreground mb-1">Your feed is empty</h4>
-                <p className="text-sm text-muted-foreground mb-4">
+                <h4 className="text-[16px] font-bold text-slate-900 dark:text-white mb-2">Your feed is empty</h4>
+                <p className="text-[14px] text-slate-500 mb-6 max-w-[250px] mx-auto">
                   Follow people and join communities to see posts here.
                 </p>
-                <Button className="bg-linear-to-r from-violet-600 to-indigo-600">
+                <Button className="h-[46px] px-6 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 shadow-md shadow-indigo-500/20 font-semibold text-[15px]">
                   Explore Communities
                 </Button>
               </CardContent>
@@ -181,23 +183,23 @@ export default function FeedPage() {
           {/* Right sidebar — suggestions */}
           <aside className="hidden lg:block lg:col-span-3">
             <Card className="sticky top-20">
-              <CardContent className="p-4">
-                <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <TrendingUp size={16} /> Trending
+              <CardContent className="p-5">
+                <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 text-[15px]">
+                  <TrendingUp size={18} className="text-indigo-500" /> Trending
                 </h4>
-                <div className="space-y-3 text-sm">
+                <div className="space-y-4 text-[14px] font-medium">
                   {['#CampusFest2025', '#ExamSeason', '#PlacementDrive'].map((tag) => (
-                    <div key={tag} className="text-primary hover:underline cursor-pointer">
+                    <div key={tag} className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer">
                       {tag}
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-6">
-                  <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Users size={16} /> Suggested
+                <div className="mt-8">
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2 text-[15px]">
+                    <Users size={18} className="text-violet-500" /> Suggested
                   </h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-[13px] text-slate-500 leading-relaxed">
                     Follow people from your college to get started.
                   </p>
                 </div>
@@ -221,10 +223,10 @@ function NavItem({
 }) {
   return (
     <button
-      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold transition-colors ${
         active
-          ? 'bg-violet-100 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300'
-          : 'text-muted-foreground hover:bg-accent'
+          ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+          : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
       }`}
     >
       <Icon size={18} />
