@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -39,12 +39,11 @@ export default function OpsPanelLayout({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
 
-  const filteredNav = navItems.filter((item) => hasPermission(item.permission));
-
-  if (!isLoading && !user) {
-    router.push('/operations/login');
-    return null;
-  }
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/operations/login');
+    }
+  }, [isLoading, user, router]);
 
   async function handleLogout() {
     try {
@@ -55,7 +54,9 @@ export default function OpsPanelLayout({ children }: { children: ReactNode }) {
     router.push('/operations/login');
   }
 
-  if (isLoading) {
+  const filteredNav = navItems.filter((item) => hasPermission(item.permission));
+
+  if (isLoading || !user) {
     return (
       <div className="flex h-screen bg-background">
         <div className="w-64 border-r border-border bg-card p-4 space-y-4">
