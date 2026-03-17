@@ -22,6 +22,7 @@ import {
   Camera
 } from 'lucide-react';
 import { CountryPhoneInput } from '@/components/user/CountryPhoneInput';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { userApi } from '@/lib/user-api';
 import { useUserAuthStore } from '@/store/user-auth.store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -262,7 +263,10 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0E0E11] text-white font-sans flex flex-col items-center py-6 sm:py-10 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0E0E11] text-slate-900 dark:text-white font-sans flex flex-col items-center py-6 sm:py-10 px-4 sm:px-6 relative overflow-hidden transition-colors duration-300">
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
       {/* Background decoration */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 dark:bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-violet-600/10 dark:bg-purple-600/20 blur-[120px] rounded-full pointer-events-none" />
@@ -283,7 +287,7 @@ export default function OnboardingPage() {
             key={`h1-${stepKey}`}
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="text-[28px] md:text-[36px] font-bold tracking-tight text-white"
+            className="text-[28px] md:text-[36px] font-bold tracking-tight text-slate-900 dark:text-white"
           >
             {stepKey === 'name' && 'What should we call you?'}
             {stepKey === 'college' && 'Find your campus'}
@@ -296,7 +300,7 @@ export default function OnboardingPage() {
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="text-[15px] text-slate-400 mt-2"
+            className="text-[15px] text-slate-500 dark:text-slate-400 mt-2"
           >
             {stepKey === 'name' && 'Set your real name and grab a unique handle.'}
             {stepKey === 'college' && 'Connect with your peers and local events.'}
@@ -336,30 +340,30 @@ export default function OnboardingPage() {
                 <div className="space-y-4 sm:space-y-5">
                   <div className="space-y-4 sm:space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-[15px] font-medium text-slate-300 mb-2">First Name *</Label>
+                      <Label htmlFor="firstName" className="text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-2">First Name *</Label>
                       <Input
                         id="firstName"
                         placeholder="e.g. Alex"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="h-[52px] bg-transparent border-white/10 rounded-[14px] px-4 text-[15px] border placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:ring-indigo-500"
+                        className="h-[52px] bg-transparent border-slate-200 dark:border-white/10 rounded-[14px] px-4 text-[15px] border text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
                         autoFocus
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-[15px] font-medium text-slate-300 mb-2">Last Name</Label>
+                      <Label htmlFor="lastName" className="text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-2">Last Name</Label>
                       <Input
                         id="lastName"
                         placeholder="e.g. Smith"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="h-[52px] bg-transparent border-white/10 rounded-[14px] px-4 text-[15px] border placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:ring-indigo-500"
+                        className="h-[52px] bg-transparent border-slate-200 dark:border-white/10 rounded-[14px] px-4 text-[15px] border text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2 pt-2">
-                    <Label htmlFor="username" className="text-[15px] font-medium text-slate-300 mb-2">Choose Handle *</Label>
+                    <Label htmlFor="username" className="text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-2">Choose Handle *</Label>
                     <div className="relative group">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                         <span className="font-semibold text-[15px]">@</span>
@@ -371,7 +375,7 @@ export default function OnboardingPage() {
                         onChange={(e) =>
                           setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))
                         }
-                        className="h-[52px] pl-10 bg-transparent border-white/10 rounded-[14px] text-[15px] border placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:ring-indigo-500"
+                        className="h-[52px] pl-10 bg-transparent border-slate-200 dark:border-white/10 rounded-[14px] text-[15px] border text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
                         maxLength={30}
                       />
                       {usernameStatus === 'checking' && (
@@ -386,18 +390,24 @@ export default function OnboardingPage() {
                     </div>
                     
                     {usernameStatus === 'taken' ? (
-                      <div className="flex flex-wrap items-center gap-2 mt-3 p-3 bg-rose-50 dark:bg-rose-500/10 rounded-lg">
-                        <span className="text-sm font-medium text-rose-600 dark:text-rose-400">Unavailable. Try:</span>
-                        {usernameSuggestions.map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => setUsername(s)}
-                            className="bg-white dark:bg-black px-3 py-1.5 rounded-md shadow-sm border border-rose-100 dark:border-rose-500/20 text-sm font-medium hover:text-indigo-600 transition"
-                          >
-                            @{s}
-                          </button>
-                        ))}
+                      <div className="mt-4 p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-500/5 border border-rose-100 dark:border-rose-500/10 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div className="flex items-center gap-2 mb-3">
+                          <XCircle className="text-rose-500" size={16} />
+                          <span className="text-[13px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Handle Taken</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="text-[14px] text-slate-500 dark:text-slate-400 py-1.5">Try:</span>
+                          {usernameSuggestions.map((s) => (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => setUsername(s)}
+                              className="px-4 py-1.5 rounded-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[13px] font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-200 dark:hover:border-indigo-500/40 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-95 shadow-xs dark:shadow-none"
+                            >
+                              @{s}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     ) : (
                       <p className="text-sm text-zinc-400 mt-2">
@@ -412,14 +422,14 @@ export default function OnboardingPage() {
               {stepKey === 'college' && (
                 <div className="space-y-4 sm:space-y-5">
                   {selectedCollege ? (
-                    <div className="p-6 rounded-2xl border border-white/10 bg-transparent flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center justify-between">
+                    <div className="p-6 rounded-2xl border border-slate-200 dark:border-white/10 bg-transparent flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center justify-between">
                       <div className="flex gap-4 items-center">
-                        <div className="h-12 w-12 shrink-0 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                        <div className="h-12 w-12 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                           <Building2 size={24} />
                         </div>
                         <div>
-                          <p className="font-bold text-[16px] text-white leading-tight mb-1">{selectedCollege.name}</p>
-                          <p className="text-[14px] text-slate-400">
+                          <p className="font-bold text-[16px] text-slate-900 dark:text-white leading-tight mb-1">{selectedCollege.name}</p>
+                          <p className="text-[14px] text-slate-500 dark:text-slate-400">
                             {[selectedCollege.shortName, selectedCollege.city, selectedCollege.state].filter(Boolean).join(', ')}
                           </p>
                         </div>
@@ -430,7 +440,7 @@ export default function OnboardingPage() {
                           setSelectedCollege(null);
                           setCollegeSearch('');
                         }}
-                        className="text-indigo-400 hover:text-white hover:bg-white/5 rounded-xl sm:ml-4 w-full sm:w-auto"
+                        className="text-indigo-600 dark:text-indigo-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl sm:ml-4 w-full sm:w-auto"
                       >
                         Change
                       </Button>
@@ -443,7 +453,7 @@ export default function OnboardingPage() {
                           placeholder="Search for your university..."
                           value={collegeSearch}
                           onChange={(e) => setCollegeSearch(e.target.value)}
-                          className="h-[52px] pl-12 bg-transparent border-white/10 rounded-[14px] text-[15px] border placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:ring-indigo-500"
+                          className="h-[52px] pl-12 bg-transparent border-slate-200 dark:border-white/10 rounded-[14px] text-[15px] border text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
                           autoFocus
                         />
                         {searchingColleges && (
@@ -452,7 +462,7 @@ export default function OnboardingPage() {
                       </div>
                       
                       {colleges.length > 0 && (
-                        <div className="max-h-72 overflow-y-auto rounded-xl border border-zinc-800 bg-zinc-900/80 divide-y divide-zinc-800 shadow-inner w-full">
+                        <div className="max-h-72 overflow-y-auto rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 divide-y divide-slate-100 dark:divide-zinc-800 shadow-inner w-full">
                           {colleges.map((c) => (
                             <button
                               key={c.id}
@@ -462,10 +472,10 @@ export default function OnboardingPage() {
                                 setCollegeSearch('');
                                 setColleges([]);
                               }}
-                              className="w-full text-left px-5 py-4 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors group overflow-hidden"
+                              className="w-full text-left px-5 py-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group overflow-hidden"
                             >
-                              <p className="font-semibold text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">{c.name}</p>
-                              <p className="text-sm text-zinc-400 mt-1 truncate">
+                              <p className="font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">{c.name}</p>
+                              <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1 truncate">
                                 {[c.shortName, c.city, c.state].filter(Boolean).join(' · ')}
                               </p>
                             </button>
@@ -474,8 +484,8 @@ export default function OnboardingPage() {
                       )}
                       
                       {collegeSearch.length >= 2 && !searchingColleges && colleges.length === 0 && (
-                        <div className="p-8 text-center bg-zinc-900/30 rounded-xl border border-dashed border-zinc-800">
-                          <p className="text-zinc-400">
+                        <div className="p-8 text-center bg-slate-50 dark:bg-zinc-900/30 rounded-xl border border-dashed border-slate-200 dark:border-zinc-800">
+                          <p className="text-slate-500 dark:text-zinc-400">
                             No colleges found. Try a different variation of the name.
                           </p>
                         </div>
@@ -488,15 +498,15 @@ export default function OnboardingPage() {
               {/* Step 3: Mobile */}
               {stepKey === 'mobile' && (
                 <div className="space-y-4 sm:space-y-5">
-                  <div className="bg-transparent rounded-2xl border border-white/10 p-1">
+                  <div className="bg-transparent rounded-2xl border border-slate-200 dark:border-white/10 p-1">
                     <CountryPhoneInput
                       value={phoneValue}
                       onChange={setPhoneValue}
                     />
                   </div>
-                  <div className="flex items-start gap-3 p-5 bg-transparent border border-white/5 rounded-2xl">
+                  <div className="flex items-start gap-3 p-5 bg-transparent border border-slate-200 dark:border-white/5 rounded-2xl">
                     <Phone className="text-slate-400 shrink-0 mt-0.5" size={20} />
-                    <p className="text-[14px] text-slate-400 leading-relaxed font-medium">
+                    <p className="text-[14px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                       Your number is kept completely private. We only use it for account recovery and important security alerts.
                     </p>
                   </div>
@@ -514,12 +524,12 @@ export default function OnboardingPage() {
                       value={dob}
                       onChange={(e) => setDob(e.target.value)}
                       max={maxDobStr}
-                      className="h-[52px] bg-transparent border-white/10 rounded-[14px] px-4 text-[15px] border placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:ring-indigo-500 [color-scheme:light] dark:[color-scheme:dark]"
+                      className="h-[52px] bg-transparent border-slate-200 dark:border-white/10 rounded-[14px] px-4 text-[15px] border text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus-visible:ring-1 focus-visible:ring-indigo-500 [color-scheme:light] dark:[color-scheme:dark]"
                       autoFocus
                     />
                   </div>
-                  <div className="flex items-center justify-center p-6 bg-zinc-900/30 rounded-xl border border-zinc-800/50">
-                    <p className="text-sm text-zinc-400 font-medium">✨ Must be at least 13 years old to join</p>
+                  <div className="flex items-center justify-center p-6 bg-slate-50 dark:bg-zinc-900/30 rounded-xl border border-slate-200 dark:border-zinc-800/50">
+                    <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium">✨ Must be at least 13 years old to join</p>
                   </div>
                 </div>
               )}
@@ -527,14 +537,14 @@ export default function OnboardingPage() {
               {/* Step 5: Avatar */}
               {stepKey === 'avatar' && (
                 <div className="space-y-4 sm:space-y-5">
-                  <div className="flex p-1 bg-zinc-900/50 rounded-xl mb-6">
+                  <div className="flex p-1 bg-slate-100 dark:bg-zinc-900/50 rounded-xl mb-6">
                     <button
                       type="button"
                       onClick={() => setAvatarType('preset')}
                       className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${
                         avatarType === 'preset'
-                          ? 'bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                          : 'text-slate-500 hover:text-zinc-700 dark:text-slate-500 dark:hover:text-white'
+                          ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-transparent'
+                          : 'text-slate-500 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white'
                       }`}
                     >
                       GenZ Pack
@@ -544,8 +554,8 @@ export default function OnboardingPage() {
                       onClick={() => setAvatarType('upload')}
                       className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                         avatarType === 'upload'
-                          ? 'bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                          : 'text-slate-500 hover:text-zinc-700 dark:text-slate-500 dark:hover:text-white'
+                          ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-transparent'
+                          : 'text-slate-500 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white'
                       }`}
                     >
                       <Camera size={16} /> Custom Photo
@@ -570,11 +580,11 @@ export default function OnboardingPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="aspect-video border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-3xl flex flex-col items-center justify-center bg-zinc-900/30 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer group">
-                      <div className="h-16 w-16 bg-zinc-900 rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                    <div className="aspect-video border-2 border-dashed border-slate-300 dark:border-zinc-700 rounded-3xl flex flex-col items-center justify-center bg-slate-50 dark:bg-zinc-900/30 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer group">
+                      <div className="h-16 w-16 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center shadow-sm mb-4 border border-slate-200 dark:border-transparent group-hover:scale-110 transition-transform">
                         <Camera className="text-slate-500 dark:text-slate-500 group-hover:text-indigo-500 transition-colors" size={28} />
                       </div>
-                      <p className="text-zinc-600 dark:text-zinc-300 font-medium">Click to upload photo</p>
+                      <p className="text-slate-600 dark:text-zinc-300 font-medium">Click to upload photo</p>
                       <p className="text-sm text-slate-500 mt-2">JPG, PNG or WEBP (Max 5MB)</p>
                     </div>
                   )}
@@ -603,7 +613,7 @@ export default function OnboardingPage() {
             {currentStep > 0 ? (
               <button 
                 onClick={handleBack}
-                className="text-[14px] font-medium text-slate-400 hover:text-white transition-colors flex items-center"
+                className="text-[14px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center"
               >
                 <ArrowLeft size={16} className="mr-1.5" /> Back
               </button>
@@ -612,7 +622,7 @@ export default function OnboardingPage() {
             {isSkippable && currentStep < STEPS.length - 1 && (
               <button 
                 onClick={handleSkip}
-                className="text-[14px] font-medium text-slate-400 hover:text-white transition-colors"
+                className="text-[14px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
                 Skip for now
               </button>

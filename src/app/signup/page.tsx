@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, GraduationCap, Eye, EyeOff, Mic, PlaySquare, Sparkles, Banknote, Mail, Lock, Apple } from 'lucide-react';
 import { OTPInput } from '@/components/user/OTPInput';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { PasswordStrength } from '@/components/user/PasswordStrength';
 import { userApi } from '@/lib/user-api';
 import { useUserAuthStore } from '@/store/user-auth.store';
@@ -44,8 +45,8 @@ export default function SignupPage() {
     );
   }
 
-  async function handleSendOTP(e: FormEvent) {
-    e.preventDefault();
+  async function handleSendOTP(e?: FormEvent | React.MouseEvent) {
+    if (e) e.preventDefault();
     if (!isPasswordValid(password)) {
       setError('Password must be 8+ characters with uppercase, lowercase, number, and special character.');
       return;
@@ -93,7 +94,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex text-white font-sans bg-[#0E0E11]">
+    <div className="min-h-screen flex text-slate-900 dark:text-white font-sans bg-slate-50 dark:bg-[#0E0E11] transition-colors duration-300">
       {/* Left Branding Panel (Hidden on smaller screens) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#0A051A] flex-col justify-between overflow-hidden p-12">
           {/* Abstract Background Effects */}
@@ -151,14 +152,18 @@ export default function SignupPage() {
       </div>
 
       {/* Right Form Panel */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative bg-[#0E0E11] border-l border-white/5">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative bg-slate-50 dark:bg-[#0E0E11] border-l border-white/5 transition-colors duration-300">
           
+          <div className="absolute top-6 right-6">
+            <ThemeToggle />
+          </div>
+
           {/* Mobile Logo (Visible only on small screens) */}
           <div className="absolute top-8 left-6 sm:left-12 flex lg:hidden items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/20 border border-white/5">
-                  <GraduationCap strokeWidth={1.5} className="w-5 h-5 text-indigo-400" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <GraduationCap strokeWidth={1.5} className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-white">CampusLink</span>
+              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">CampusLink</span>
           </div>
 
           <div className="w-full max-w-[400px] mt-16 lg:mt-0">
@@ -173,13 +178,13 @@ export default function SignupPage() {
                 <>
                   {/* Header */}
                   <div className="mb-8">
-                      <h2 className="text-[32px] font-bold tracking-tight mb-2 text-white">Create an account</h2>
-                      <p className="text-[15px] text-slate-400">Join your campus and start a new vibe.</p>
+                      <h2 className="text-[32px] font-bold tracking-tight mb-2 text-slate-900 dark:text-white">Create an account</h2>
+                      <p className="text-[15px] text-slate-500 dark:text-slate-400">Join your campus and start a new vibe.</p>
                   </div>
 
                   {/* Social Logins */}
                   <div className="grid grid-cols-2 gap-4 mb-8">
-                      <button type="button" className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-white/10 rounded-[14px] bg-transparent hover:bg-white/5 text-[15px] font-medium transition-colors text-white">
+                      <button type="button" className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-slate-200 dark:border-white/10 rounded-[14px] bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-[15px] font-medium transition-colors text-slate-900 dark:text-white">
                           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -188,25 +193,25 @@ export default function SignupPage() {
                           </svg>
                           Google
                       </button>
-                      <button type="button" className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-white/10 rounded-[14px] bg-transparent hover:bg-white/5 text-[15px] font-medium transition-colors text-white">
-                          <Apple strokeWidth={2} className="w-5 h-5 text-white" />
+                      <button type="button" className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-slate-200 dark:border-white/10 rounded-[14px] bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-[15px] font-medium transition-colors text-slate-900 dark:text-white">
+                          <Apple strokeWidth={2} className="w-5 h-5 text-slate-900 dark:text-white" />
                           Apple
                       </button>
                   </div>
 
                   <div className="relative mb-8">
                       <div className="absolute inset-0 flex items-center">
-                          <div className="w-full border-t border-white/10"></div>
+                          <div className="w-full border-t border-slate-200 dark:border-white/10"></div>
                       </div>
                       <div className="relative flex justify-center text-[13px]">
-                          <span className="px-4 bg-[#0E0E11] text-slate-500">Or continue with email</span>
+                          <span className="px-4 bg-slate-50 dark:bg-[#0E0E11] text-slate-500">Or continue with email</span>
                       </div>
                   </div>
 
                   {/* Form */}
                   <form onSubmit={handleSendOTP} className="space-y-5">
                       <div>
-                          <label htmlFor="email" className="block text-[15px] font-medium text-slate-300 mb-2">College Email</label>
+                          <label htmlFor="email" className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-2">College Email</label>
                           <div className="relative">
                               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                                   <Mail strokeWidth={2} className="w-5 h-5" />
@@ -214,14 +219,14 @@ export default function SignupPage() {
                               <input id="email" name="email" type="email" autoComplete="email" required 
                                   value={email}
                                   onChange={(e) => setEmail(e.target.value)}
-                                  className="block w-full pl-12 pr-4 py-3.5 bg-transparent border border-white/10 rounded-[14px] text-[15px] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all" 
+                                  className="block w-full pl-12 pr-4 py-3.5 bg-transparent border border-slate-200 dark:border-white/10 rounded-[14px] text-[15px] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all" 
                                   placeholder="you@college.edu" />
                           </div>
                       </div>
 
                       <div className="space-y-3">
                         <div>
-                            <label htmlFor="password" className="block text-[15px] font-medium text-slate-300 mb-2">Password</label>
+                            <label htmlFor="password" className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-2">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                                     <Lock strokeWidth={2} className="w-5 h-5" />
@@ -229,9 +234,9 @@ export default function SignupPage() {
                                 <input id="password" name="password" type={showPassword ? 'text' : 'password'} required 
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-12 pr-12 py-3.5 bg-transparent border border-white/10 rounded-[14px] text-[15px] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all" 
+                                    className="block w-full pl-12 pr-12 py-3.5 bg-transparent border border-slate-200 dark:border-white/10 rounded-[14px] text-[15px] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all" 
                                     placeholder="Create a strong password" />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300 transition-colors">
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
                                     {showPassword ? <EyeOff strokeWidth={2} className="w-5 h-5" /> : <Eye strokeWidth={2} className="w-5 h-5" />}
                                 </button>
                             </div>
@@ -248,9 +253,9 @@ export default function SignupPage() {
                   </form>
 
                   <div className="mt-8 text-center">
-                      <p className="text-[15px] text-slate-400">
+                      <p className="text-[15px] text-slate-500 dark:text-slate-400">
                           Already have an account? 
-                          <Link href="/login" className="ml-1.5 font-semibold text-white hover:underline underline-offset-4">Sign in</Link>
+                          <Link href="/login" className="ml-1.5 font-semibold text-slate-900 dark:text-white hover:underline underline-offset-4">Log in</Link>
                       </p>
                   </div>
                 </>
@@ -258,8 +263,8 @@ export default function SignupPage() {
                 <div className="space-y-6">
                   {/* OTP Header */}
                   <div className="mb-8 mt-12 lg:mt-0 text-center">
-                      <h2 className="text-[32px] font-bold tracking-tight mb-3 text-white">Check your email</h2>
-                      <p className="text-[15px] text-slate-400 leading-relaxed">We sent a 6-digit code to <span className="text-white font-medium">{email}</span></p>
+                      <h2 className="text-[32px] font-bold tracking-tight mb-3 text-slate-900 dark:text-white">Verify your email</h2>
+                      <p className="text-[15px] text-slate-500 dark:text-slate-400 leading-relaxed">We sent a 6-digit code to <span className="text-slate-900 dark:text-white font-medium">{email}</span></p>
                   </div>
 
                   <OTPInput
@@ -275,15 +280,15 @@ export default function SignupPage() {
                   )}
 
                   <div className="text-center mt-10">
-                    <p className="text-[14px] text-slate-400">
+                    <p className="text-[14px] text-slate-500 dark:text-slate-400">
                       Didn't receive the code?{' '}
                       {countdown > 0 ? (
-                        <span className="text-white font-medium">Resend in {countdown}s</span>
+                        <span className="text-slate-900 dark:text-white font-medium">Resend in {countdown}s</span>
                       ) : (
                         <button
                           type="button"
-                          onClick={handleResend}
-                          className="text-indigo-400 font-medium hover:text-indigo-300 transition-colors"
+                          onClick={(e) => handleSendOTP(e)}
+                          className="text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
                         >
                           Resend OTP
                         </button>
@@ -291,7 +296,7 @@ export default function SignupPage() {
                     </p>
                     <button
                       onClick={() => { setStep('details'); setError(''); }}
-                      className="mt-6 text-[14px] text-slate-500 hover:text-white transition-colors"
+                      className="mt-6 text-[14px] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
                       Wait, let me change my email
                     </button>
