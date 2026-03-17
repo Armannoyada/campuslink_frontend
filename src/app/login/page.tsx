@@ -7,9 +7,15 @@ import { Loader2, GraduationCap, Eye, EyeOff, Mic, PlaySquare, Sparkles, Banknot
 import { OTPInput } from '@/components/user/OTPInput';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { userApi } from '@/lib/user-api';
-import { useUserAuthStore } from '@/store/user-auth.store';
+import { useUserAuthStore, UserProfileData } from '@/store/user-auth.store';
 
 type Step = 'credentials' | 'otp';
+
+function setAuthCookie(name: string, value: string, days: number) {
+  const isProd = process.env.NODE_ENV === 'production';
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${value}; expires=${expires}; path=/; ${isProd ? 'SameSite=None; Secure' : 'SameSite=Lax'}`;
+}
 
 export default function UserLoginPage() {
   const router = useRouter();
@@ -58,7 +64,13 @@ export default function UserLoginPage() {
     try {
       const res = await userApi.post('/auth/user/login/verify', { sessionToken, otp });
       const data = res.data.data;
-      useUserAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
+      
+      // Manually set client-side cookies so middleware can see them in cross-domain prod
+      setAuthCookie('user_token', data.accessToken, 0.01); // 15 mins
+      setAuthCookie('user_refresh', data.refreshToken, 30);
+      
+      useUserAuthStore.getState().setTokens(data.accessToken, data.refreshToken, data.user as UserProfileData);
+      
       if (data.user?.onboardingComplete) {
         router.push('/feed');
       } else {
