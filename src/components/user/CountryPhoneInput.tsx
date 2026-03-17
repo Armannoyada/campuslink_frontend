@@ -69,18 +69,17 @@ export function CountryPhoneInput({ value, onChange, disabled = false }: Country
   }
 
   return (
-    <div className="relative flex gap-0">
-      <Button
+    <div className="relative flex">
+      <button
         type="button"
-        variant="outline"
         disabled={disabled}
         onClick={() => setShowDropdown(!showDropdown)}
-        className="rounded-r-none border-r-0 px-3 min-w-[100px] shrink-0"
+        className="rounded-l-[14px] border border-white/10 border-r-0 bg-transparent hover:bg-white/5 text-white px-3 min-w-[100px] shrink-0 flex items-center justify-center transition-colors h-[52px]"
       >
         <span className="mr-1">{selectedCountry.flag}</span>
-        <span className="text-sm">{selectedCountry.dial}</span>
-        <ChevronDown size={14} className="ml-1 text-muted-foreground" />
-      </Button>
+        <span className="text-[15px]">{selectedCountry.dial}</span>
+        <ChevronDown size={16} className="ml-1 text-slate-500" />
+      </button>
       <Input
         type="tel"
         inputMode="numeric"
@@ -88,33 +87,33 @@ export function CountryPhoneInput({ value, onChange, disabled = false }: Country
         value={localNumber}
         onChange={(e) => handlePhoneChange(e.target.value)}
         disabled={disabled}
-        className="rounded-l-none"
+        className="rounded-l-none rounded-r-[14px] h-[52px] bg-transparent border-white/10 focus-visible:ring-1 focus-visible:ring-indigo-500 text-[15px] text-white placeholder-slate-500"
       />
 
       {showDropdown && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-card border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-hidden">
-          <div className="p-2 border-b border-border">
-            <Input
+        <div className="absolute top-full left-0 mt-2 w-72 bg-[#18181B] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+          <div className="p-2 border-b border-white/10 flex flex-col">
+            <input
               placeholder="Search country..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 text-sm"
+              className="h-10 px-3 text-[14px] bg-black/20 border border-white/10 text-white placeholder-slate-500 rounded-lg outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
               autoFocus
             />
           </div>
-          <div className="max-h-48 overflow-y-auto">
+          <div className="max-h-64 overflow-y-auto">
             {filteredCountries.map((country) => (
               <button
                 key={country.code}
                 type="button"
                 onClick={() => handleSelectCountry(country)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-accent flex items-center gap-2 ${
-                  selectedCountry.code === country.code ? 'bg-accent' : ''
+                className={`w-full text-left px-4 py-3 text-[14px] hover:bg-white/5 flex items-center gap-3 transition-colors ${
+                  selectedCountry.code === country.code ? 'bg-white/10' : ''
                 }`}
               >
-                <span>{country.flag}</span>
-                <span className="flex-1 text-foreground">{country.name}</span>
-                <span className="text-muted-foreground">{country.dial}</span>
+                <span className="text-xl">{country.flag}</span>
+                <span className="flex-1 text-slate-200 font-medium">{country.name}</span>
+                <span className="text-slate-500 font-medium">{country.dial}</span>
               </button>
             ))}
           </div>

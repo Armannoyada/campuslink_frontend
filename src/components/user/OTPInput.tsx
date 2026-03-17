@@ -76,8 +76,8 @@ export function OTPInput({ length = 6, onComplete, disabled = false }: OTPInputP
           onPaste={index === 0 ? handlePaste : undefined}
           onFocus={(e) => e.target.select()}
           disabled={disabled}
-          className="w-12 h-14 text-center text-xl font-semibold border-2 border-border rounded-xl bg-background text-foreground
-            focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
+          className="w-12 h-14 text-center text-xl font-semibold border border-white/10 rounded-xl bg-transparent text-white
+            focus:border-2 focus:border-[#5E43F3] focus:ring-0 focus:outline-none
             disabled:opacity-50 disabled:cursor-not-allowed
             transition-all duration-150"
         />
