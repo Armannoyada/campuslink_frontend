@@ -30,7 +30,7 @@ interface UserAuthState {
   isAuthenticated: boolean;
   hasFetched: boolean;
   setUser: (user: UserProfileData | null) => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  setTokens: (accessToken: string, refreshToken: string, user?: UserProfileData) => void;
   setAccessToken: (accessToken: string) => void;
   clearAuth: () => void;
   setLoading: (loading: boolean) => void;
@@ -45,10 +45,14 @@ export const useUserAuthStore = create<UserAuthState>((set) => ({
   isLoading: true,
   isAuthenticated: false,
   hasFetched: false,
-  setUser: (user) =>
+  setUser: (user: UserProfileData | null) =>
     set({ user, isAuthenticated: !!user, isLoading: false }),
-  setTokens: (accessToken, refreshToken) =>
-    set({ accessToken, refreshToken }),
+  setTokens: (accessToken: string, refreshToken: string, user?: UserProfileData) =>
+    set({ 
+      accessToken, 
+      refreshToken, 
+      ...(user ? { user, isAuthenticated: true, isLoading: false } : {}) 
+    }),
   setAccessToken: (accessToken) =>
     set({ accessToken }),
   clearAuth: () =>

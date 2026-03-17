@@ -56,8 +56,20 @@ userApi.interceptors.response.use(
         const res = await userApi.post('/auth/user/refresh', refreshToken ? { refreshToken } : {});
         const newAccessToken = res.data?.data?.accessToken;
         const newRefreshToken = res.data?.data?.refreshToken;
+        
         if (newAccessToken) {
           useUserAuthStore.getState().setTokens(newAccessToken, newRefreshToken ?? refreshToken ?? '');
+          
+          // Sync cookies for middleware
+          if (typeof document !== 'undefined') {
+             const isProd = process.env.NODE_ENV === 'production';
+             const expiresAccess = new Date(Date.now() + 15 * 60 * 1000).toUTCString();
+             const expiresRefresh = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+             document.cookie = `user_token=${newAccessToken}; expires=${expiresAccess}; path=/; ${isProd ? 'SameSite=None; Secure' : 'SameSite=Lax'}`;
+             if (newRefreshToken) {
+               document.cookie = `user_refresh=${newRefreshToken}; expires=${expiresRefresh}; path=/; ${isProd ? 'SameSite=None; Secure' : 'SameSite=Lax'}`;
+             }
+          }
         }
         processQueue(null);
         return userApi(originalRequest);
